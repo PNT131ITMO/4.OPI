@@ -1,0 +1,203 @@
+plugins {
+    id 'war'
+    id 'java'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    junitVersion = '5.11.4'
+}
+
+dependencies {
+    implementation 'jakarta.platform:jakarta.jakartaee-web-api:9.0.0'
+    implementation 'jakarta.platform:jakarta.jakartaee-api:9.0.0'
+    implementation 'jakarta.persistence:jakarta.persistence-api:3.0.0'
+    annotationProcessor 'jakarta.platform:jakarta.jakartaee-api:9.0.0'
+    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'
+    implementation 'jakarta.enterprise:jakarta.enterprise.cdi-api:4.1.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.4'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.4'
+    implementation 'org.hibernate.orm:hibernate-core:6.4.4.Final'
+    implementation 'org.postgresql:postgresql:42.7.4'
+    implementation 'org.jboss.weld.servlet:weld-servlet-shaded:5.1.2.Final'
+    implementation fileTree(dir: 'lib', include: ['*.jar']) 
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+tasks.register('compileCustom', JavaCompile) {
+    description = "Compiling the project's source codes"
+    group = 'Custom'
+    source = fileTree('src/main/java')
+    destinationDirectory = file("$buildDir/custom-classes")
+    classpath = sourceSets.main.compileClasspath
+    options.encoding = 'UTF-8'
+    sourceCompatibility = '21'
+    targetCompatibility = '21'
+    doLast {
+        println "Compiling source code ...."
+    }
+}
+
+tasks.register('warCustom', War) {
+    description = "Packages compiled classes and web resources into a WAR archive."
+    group = 'Custom'
+    dependsOn 'compileCustom'
+    archiveBaseName = 'custom-app'
+    archiveVersion = '1.0'
+    destinationDirectory = file("$buildDir/custom-war")
+    from("$buildDir/custom-classes")
+    from('src/main/webapp')
+    webInf {
+        from 'src/main/webapp/WEB-INF'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    doLast {
+        println "WAR package created at: $destinationDirectory"
+    }
+}
+
+tasks.register('buildCustom') {
+    description = "Compilation of the project's source code and its packaging into an executable WAR archive."
+    group = 'Custom'
+    dependsOn 'compileCustom', 'warCustom'
+    doLast {
+        println "buildCustom finished: WAR archive is ready."
+    }
+}
+
+tasks.register('cleanCustom', Delete) {
+    description = "Deleting compiled project classes and all temporary files (if any)."
+    group = 'Custom'
+    delete 'built', "$buildDir/custom-classes", "$buildDir/custom-war"
+}
+
+tasks.register('testCustom', Test) {
+    description = "Runs JUnit tests after compiling project source code"
+    group = 'Custom'
+    dependsOn 'compileCustom'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform()
+    doLast {
+        println("Tests executed successfully.")
+    }
+}
+
+import java.security.MessageDigest
+
+
+tasks.register('docCustom', Javadoc) {
+    description = "Generates Javadoc and adds MD5/SHA-1 checksums of project files to MANIFEST.MF."
+    group = 'Custom'
+    dependsOn 'compileCustom' 
+    source = sourceSets.main.allJava
+    classpath = sourceSets.main.compileClasspath + files("$buildDir/custom-classes")
+    destinationDir = file("$buildDir/docs/javadoc")
+    
+    options.addStringOption('Xdoclint:none', '-quiet')
+    
+    doLast {
+        def customClassesDir = file("$buildDir/custom-classes")
+        def files = customClassesDir.exists() ? fileTree(customClassesDir).files : []
+        def manifestFile = file("$buildDir/tmp/warCustom/MANIFEST.MF")
+        manifestFile.parentFile.mkdirs()
+        manifestFile.createNewFile()
+
+        def md5Digest = MessageDigest.getInstance('MD5')
+        def sha1Digest = MessageDigest.getInstance('SHA-1')
+
+        manifestFile.withWriterAppend { writer ->
+            files.each { file ->
+                if (file.exists() && file.isFile()) {
+                    def md5Bytes = md5Digest.digest(file.bytes)
+                    def md5Hex = md5Bytes.encodeHex().toString()
+                    
+                    def sha1Bytes = sha1Digest.digest(file.bytes)
+                    def sha1Hex = sha1Bytes.encodeHex().toString()
+
+                    writer.writeLine("MD5-${file.name}: ${md5Hex}")
+                    writer.writeLine("SHA1-${file.name}: ${sha1Hex}")
+                }
+            }
+        }
+        println "Javadoc generated and checksums written to MANIFEST.MF"
+    }
+}
+
+import java.security.MessageDigest
+import org.gradle.api.tasks.bundling.Zip
+
+tasks.register('teamCustom') {
+    description = "Retrieves the two previous SVN revisions, builds them, and packages the resulting WAR files into a ZIP archive."
+    group = 'Custom'
+
+    doLast {
+        def tempDir = file("$buildDir/teamCustom")
+        tempDir.mkdirs()
+        def currentRevision = exec {
+            commandLine 'svn', 'info', '--show-item', 'revision'
+            workingDir projectDir
+            standardOutput = new ByteArrayOutputStream()
+        }.standardOutput.toString().trim().toInteger()
+
+        def revisions = [(currentRevision - 1), (currentRevision - 2)]
+
+        def warFiles = []
+
+        revisions.each { rev ->
+            if (rev >= 0) { 
+                println "Processing revision $rev..."
+
+                def revDir = file("$tempDir/revision-$rev")
+                revDir.mkdirs()
+                exec {
+                    commandLine 'svn', 'checkout', '-r', rev, project.svn.url, revDir
+                    workingDir tempDir
+                }
+
+                exec {
+                    commandLine './gradlew', 'buildCustom'
+                    workingDir revDir
+                }
+
+                def warFile = file("$revDir/app/build/custom-war/custom-app-1.0.war")
+                if (warFile.exists()) {
+                    warFiles << warFile
+                    println "Collected WAR file for revision $rev: $warFile"
+                } else {
+                    println "WARNING: WAR file not found for revision $rev"
+                }
+            } else {
+                println "Skipping invalid revision $rev"
+            }
+        }
+
+        if (warFiles) {
+            def zipFile = file("$buildDir/teamCustom/previous-revisions.zip")
+            tasks.register("zipRevisions-$currentRevision", Zip) {
+                archiveFileName = zipFile.name
+                destinationDirectory = zipFile.parentFile
+                warFiles.each { war ->
+                    from(war) {
+                        rename { "revision-${war.parentFile.parentFile.parentFile.name}-${war.name}" }
+                    }
+                }
+            }.get().execute()
+            println "ZIP archive created: $zipFile"
+        } else {
+            println "No WAR files found to zip."
+        }
+    }
+}

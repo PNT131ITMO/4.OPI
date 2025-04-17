@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="WEB-INF/templates/creator.xhtml">
+
+    <ui:define name="head">
+        <h:outputStylesheet library="css" name="main.css"/>
+        <title> Web Project 3 - Main Page</title>
+    </ui:define>
+
+    <ui:define name="main">
+        <main class="main-container">
+            <h1 class="visually-hidden">Main Page</h1>
+
+            <div class="main-container-item main-container-item-left-column">
+                <section class="main-container-item-left-column-item content-section content-section-graph">
+                    <h2 class="content-section-header content-section-header-graph topper">
+                        <span class="content-section-header-text">
+                            Graph
+                        </span>
+                    </h2>
+                    <div class="content-container result-graph-container">
+                        <object class="result-graph" type="image/svg+xml" data="#{resource['img/result-graph.svg']}">
+                            <img src="#{resource['img/result-graph.png']}" width="220" height="220" alt="Graph"/>
+                        </object>
+                        <canvas class="graph-canvas graph-canvas-points" width="220" height="220">Previous checks
+                        </canvas>
+                        <canvas class="graph-canvas graph-canvas-current" width="220" height="220">Interactive graph
+                        </canvas>
+                    </div>
+                </section>
+
+                <section class="main-container-item-left-column-item content-section content-section_values">
+                    <h2 class="content-section-header content-section-header-values topper">
+                        <span class="content-section-header-text">
+                            Data
+                        </span>
+                    </h2>
+                    <h:form class="input-form">
+                        <p class="input-form-info">Enter the coordinates of the point</p>
+
+                        <div class="input-form-container input-form-container-select">
+                            <h:outputLabel styleClass="input-form-label input-form-label-x" for="x-select" value="X"/>
+                            <h:selectOneMenu styleClass="input-form-control input-form-select input-form-select-x" id="x-select" value="#{entries.entry.xVal}">
+                                <f:selectItem itemLabel="-2" itemValue="-2"/>
+                                <f:selectItem itemLabel="-1.5" itemValue="-1.5"/>
+                                <f:selectItem itemLabel="-1" itemValue="-1"/>
+                                <f:selectItem itemLabel="-0.5" itemValue="-0.5"/>
+                                <f:selectItem itemLabel="0" itemValue="0"/>
+                                <f:selectItem itemLabel="0.5" itemValue="0.5"/>
+                                <f:selectItem itemLabel="1" itemValue="1"/>
+                                <f:selectItem itemLabel="1.5" itemValue="1.5"/>
+                                <f:selectItem itemLabel="2" itemValue="2"/>
+                                <f:validateRequired/>
+                            </h:selectOneMenu>
+                        </div>
+
+                        <div class="input-form-container input-form-container-text">
+                            <h:outputLabel styleClass="input-form-label input-form-label-y" for="y-text" value="Y"/>
+                            <h:inputText styleClass="input-form-control input-form-text input-form-text-y" id="y-text" maxlength="5" autoComplete="off" a:placeholder="From 5 to 5" value="#{entries.entry.yVal}">
+                                <f:validateRequired/>
+                                <f:validateDoubleRange minimum="-5" maximum="5"/>
+                            </h:inputText>
+                        </div>
+
+                        <div class="input-form-container input-form-container-buttons">
+                            <h:outputLabel styleClass="input-form-label input-form-label-r" value="R"/>
+                            <ul class="input-form-control input-form-button-list-r">
+                                <li class="input-form-button-list-r-item">
+                                    <input type="radio" name="rValue" class="input-form-button input-form-button-r" id="r-button1" value="1"/>
+                                    <label for="r-button1">1</label>
+                                </li>
+                                <li class="input-form-button-list-r-item">
+                                    <input type="radio" name="rValue" class="input-form-button input-form-button-r" id="r-button2" value="2"/>
+                                    <label for="r-button2">2</label>
+                                </li>
+                                <li class="input-form-button-list-r-item">
+                                    <input type="radio" name="rValue" class="input-form-button input-form-button-r" id="r-button3" value="3"/>
+                                    <label for="r-button3">3</label>
+                                </li>
+                                <li class="input-form-button-list-r-item">
+                                    <input type="radio" name="rValue" class="input-form-button input-form-button-r" id="r-button4" value="4"/>
+                                    <label for="r-button4">4</label>
+                                </li>
+                                <li class="input-form-button-list-r-item">
+                                    <input type="radio" name="rValue" class="input-form-button input-form-button-r" id="r-button5" value="5"/>
+                                    <label for="r-button5">5</label>
+                                </li>
+                            </ul>
+                        </div>
+
+
+
+                        <h:panelGroup styleClass="input-form-hidden-r">
+                            <h:inputHidden value="#{entries.entry.rVal}">
+                                <f:validateRequired/>
+                                <f:validateLongRange minimum="1" maximum="5"/>
+                            </h:inputHidden>
+                        </h:panelGroup>
+
+                        <div class="input-form-control-buttons-container">
+                            <h:commandButton styleClass="input-form-control-buttons-button input-form-control-buttons-button-submit" value="Submit" action="#{entries.addEntry}"/>
+                            <h:commandButton styleClass="input-form-control-buttons-button input-form-control-buttons-button-reset" value="Reset" action="#{entries.clearEntries}" immediate="true"/>
+                        </div>
+                    </h:form>
+                </section>
+            </div>
+
+            <section class="main-container-item main-container-item-table content-section content-section-table">
+                <h2 class="content-section-header content-section-header-table topper">
+                    <span class="content-section-header-text">
+                        Table
+                    </span>
+                </h2>
+                <div class="result-table-container">
+                    <h:dataTable styleClass="result-table" value="#{entries.entries}" var="entry">
+                        <h:column headerClass="result-table-column result-table-column-coords">
+                            <f:facet name="header">X</f:facet>
+                            <h:outputText value="#{entry.xVal}"/>
+                        </h:column>
+                        <h:column headerClass="result-table-column result-table-column-coords">
+                            <f:facet name="header">Y</f:facet>
+                            <h:outputText value="#{entry.yVal}"/>
+                        </h:column>
+                        <h:column headerClass="result-table-column result-table-column-coords">
+                            <f:facet name="header">R</f:facet>
+                            <h:outputText value="#{entry.rVal}"/>
+                        </h:column>
+                        <h:column headerClass="result-table-column result-table-column-coords">
+                            <f:facet name="header">Result</f:facet>
+                            <h:outputText value="#{entry.hitResult}"/>
+                        </h:column>
+                    </h:dataTable>
+                </div>
+            </section>
+        </main>
+
+        <h:outputScript library="js" name="main.js"/>
+    </ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.ExampleTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2025-04-16T11:45:14.224Z" hostname="LAPTOP-KDEK50V9" time="0.031">
+  <properties/>
+  <testcase name="testMissOnEdgeCase()" classname="org.example.ExampleTest" time="0.021"/>
+  <testcase name="testHitInCircle()" classname="org.example.ExampleTest" time="0.001"/>
+  <testcase name="testHitInTriangle()" classname="org.example.ExampleTest" time="0.001"/>
+  <testcase name="testHitInRectangle()" classname="org.example.ExampleTest" time="0.001"/>
+  <testcase name="testMissOutsideAllAreas()" classname="org.example.ExampleTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

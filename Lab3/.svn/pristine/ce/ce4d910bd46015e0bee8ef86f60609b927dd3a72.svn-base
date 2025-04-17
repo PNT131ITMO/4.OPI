@@ -1,0 +1,57 @@
+package org.example;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import weblab.webproject3.Entry;
+
+public class ExampleTest {
+    @Test
+    public void testHitInTriangle() {
+        Entry entry = new Entry();
+        entry.setxVal(-1.0); 
+        entry.setyVal(-1.0); 
+        entry.setrVal(2);
+        entry.checkHit();
+        assertEquals("hit", entry.getHitResult(), "Point should be a hit in triangle");
+    }
+
+    @Test
+    public void testHitInRectangle() {
+        Entry entry = new Entry();
+        entry.setxVal(1.0);
+        entry.setyVal(-1.0);
+        entry.setrVal(4);
+        entry.checkHit();
+        assertEquals("hit", entry.getHitResult(), "Point should be a hit in rectangle");
+    }
+
+    @Test
+    public void testHitInCircle() {
+        Entry entry = new Entry();
+        entry.setxVal(-1.0); 
+        entry.setyVal(1.0);
+        entry.setrVal(4);
+        entry.checkHit();
+        assertEquals("hit", entry.getHitResult(), "Point should be a hit in circle");
+    }
+
+    @Test
+    public void testMissOutsideAllAreas() {
+        Entry entry = new Entry();
+        entry.setxVal(3.0);
+        entry.setyVal(3.0);
+        entry.setrVal(2);
+        entry.checkHit();
+        assertEquals("miss", entry.getHitResult(), "Point should be a miss (outside all areas)");
+    }
+
+    @Test
+    public void testMissOnEdgeCase() {
+        Entry entry = new Entry();
+        entry.setxVal(0.0); 
+        entry.setyVal(-2.1); 
+        entry.setrVal(2);
+        entry.checkHit();
+        assertEquals("miss", entry.getHitResult(), "Point should be a miss (just outside rectangle)");
+    }
+}
