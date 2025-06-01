@@ -1,0 +1,79 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.example.linter",
+    "module": "project-structure-linter",
+    "version": "1.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.13"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "files": [
+        {
+          "name": "project-structure-linter-1.0.0.jar",
+          "url": "project-structure-linter-1.0.0.jar",
+          "size": 24754,
+          "sha512": "9f3ac67b082eee02572b9e1619d35edd16ea1155c33c2b5c0937e4f1bcd391abfaf0182eb42a8b65f559beb849aed434491224e165373a5e8c403123870942e2",
+          "sha256": "306660a50967b80186fcc18ac147ce0a738e119c5c5d50cfd3ddf4cba54a10f4",
+          "sha1": "5bd5256b44ef92b560a73eefbe74366d00f1d5a0",
+          "md5": "2ff387d18f0f4e2c47a3d763a8baaa38"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib"
+        }
+      ],
+      "dependencyConstraints": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.0.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "project-structure-linter-1.0.0.jar",
+          "url": "project-structure-linter-1.0.0.jar",
+          "size": 24754,
+          "sha512": "9f3ac67b082eee02572b9e1619d35edd16ea1155c33c2b5c0937e4f1bcd391abfaf0182eb42a8b65f559beb849aed434491224e165373a5e8c403123870942e2",
+          "sha256": "306660a50967b80186fcc18ac147ce0a738e119c5c5d50cfd3ddf4cba54a10f4",
+          "sha1": "5bd5256b44ef92b560a73eefbe74366d00f1d5a0",
+          "md5": "2ff387d18f0f4e2c47a3d763a8baaa38"
+        }
+      ]
+    }
+  ]
+}
